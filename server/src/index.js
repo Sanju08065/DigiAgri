@@ -54,11 +54,13 @@ app.use(async (req, res, next) => {
 
 // ── Routes ─────────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
+  const states = { 0: 'disconnected', 1: 'connected', 2: 'connecting', 3: 'disconnecting' };
   res.json({
     status: 'ok',
     env: process.env.NODE_ENV,
-    db: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
-    mongoUri: MONGODB_URI ? 'set' : 'NOT SET — add MONGODB_URI in Vercel env vars',
+    db: states[mongoose.connection.readyState] || 'unknown',
+    mongoUri: MONGODB_URI ? MONGODB_URI.replace(/:([^@]+)@/, ':****@') : 'NOT SET',
+    readyState: mongoose.connection.readyState,
   });
 });
 
