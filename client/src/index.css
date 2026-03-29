@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  @apply bg-[#f5f7fa] text-gray-900 antialiased;
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 99px; }
+
+@layer utilities {
+  .sidebar-link {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer;
+  }
+  .sidebar-link-active {
+    background: rgba(255,255,255,0.15);
+    color: white;
+  }
+  .sidebar-link-inactive {
+    color: rgba(255,255,255,0.55);
+  }
+  .sidebar-link-inactive:hover {
+    background: rgba(255,255,255,0.08);
+    color: white;
+  }
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-sm border border-white/60;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+  }
+  .input-base {
+    @apply w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none transition-all duration-200 placeholder:text-gray-400;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .input-base:focus {
+    @apply border-primary-400 ring-2 ring-primary-100;
+  }
+  .btn-primary {
+    @apply flex items-center justify-center gap-2 px-5 py-3 text-white rounded-xl font-semibold text-sm transition-all;
+    background: linear-gradient(135deg, #16a34a, #10b981);
+    box-shadow: 0 4px 14px rgba(22,163,74,0.3);
+  }
+  .btn-primary:hover { opacity: 0.92; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-secondary {
+    @apply flex items-center justify-center gap-2 px-5 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-all;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .btn-secondary:active { transform: scale(0.98); }
+  .page-title {
+    @apply text-2xl font-extrabold text-gray-900 tracking-tight;
+  }
+  .page-subtitle {
+    @apply text-sm text-gray-500 mt-0.5;
+  }
+  .stat-card {
+    @apply relative overflow-hidden rounded-2xl p-5 text-white cursor-pointer transition-all duration-300;
+  }
+  .stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  }
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold;
+  }
+  .shadow-card {
+    box-shadow: 0 2px 24px rgba(0,0,0,0.06);
+  }
+  .shadow-card-lg {
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+  }
+}
