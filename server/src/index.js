@@ -10,6 +10,7 @@ const cropRoutes = require('./routes/crops');
 const complaintRoutes = require('./routes/complaints');
 const schemeRoutes = require('./routes/schemes');
 const weatherRoutes = require('./routes/weather');
+const seedRoutes = require('./routes/seed');
 
 const app = express();
 
@@ -70,6 +71,7 @@ app.use('/api/crops', cropRoutes);
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/schemes', schemeRoutes);
 app.use('/api/weather', weatherRoutes);
+app.use('/api/seed', seedRoutes);
 
 // ── Global error handler ───────────────────────────────────────────────────
 app.use((err, req, res, next) => {
