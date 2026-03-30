@@ -8,12 +8,14 @@
   ],
   "routes": [
     {
-      "src": "/uploads/(.*)",
-      "dest": "src/index.js"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "src/index.js"
+      "src": "/(.*)",
+      "dest": "src/index.js",
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET,POST,PUT,PATCH,DELETE,OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type,Authorization",
+        "Access-Control-Allow-Credentials": "true"
+      }
     }
   ]
 }

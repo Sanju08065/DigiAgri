@@ -14,19 +14,14 @@ const seedRoutes = require('./routes/seed');
 
 const app = express();
 
-app.use(cors({
-  origin: [
-    'https://digi-agri.vercel.app',
-    'http://localhost:3000',
-    /\.vercel\.app$/,
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
-
-// Handle preflight for all routes
-app.options('*', cors());
+// CORS — handled at Vercel edge level via vercel.json + Express fallback
+app.use(cors({ origin: '*', credentials: false }));
+app.options('*', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  res.status(200).end();
+});
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
