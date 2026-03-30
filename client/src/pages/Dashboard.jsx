@@ -16,7 +16,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     Promise.all([
-      API.get("/weather", { params: { location: user?.location || "India" } }),
+      API.get("/weather", { params: { location: user?.location?.split(",")[0]?.trim() || "New Delhi" } }),
       API.get("/users/stats"),
     ]).then(([w, s]) => { setWeather(w.data); setStats(s.data); })
       .catch(() => {}).finally(() => setLoading(false));
