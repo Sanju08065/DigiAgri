@@ -21,10 +21,10 @@ router.post('/', async (req, res) => {
       role: 'admin', phone: '+91 9810012345', location: 'New Delhi',
     });
 
-    const farmers = await User.insertMany([
-      { name: 'Ravi Kumar', email: 'farmer@agri.com', password: 'farmer123', role: 'farmer', phone: '+91 9876543210', location: 'Ludhiana, Punjab' },
-      { name: 'Sunita Devi', email: 'sunita@agri.com', password: 'farmer123', role: 'farmer', phone: '+91 9823456789', location: 'Nashik, Maharashtra' },
-      { name: 'Mohan Patel', email: 'mohan@agri.com', password: 'farmer123', role: 'farmer', phone: '+91 9745678901', location: 'Anand, Gujarat' },
+    const farmers = await Promise.all([
+      User.create({ name: 'Ravi Kumar', email: 'farmer@agri.com', password: 'farmer123', role: 'farmer', phone: '+91 9876543210', location: 'Ludhiana, Punjab' }),
+      User.create({ name: 'Sunita Devi', email: 'sunita@agri.com', password: 'farmer123', role: 'farmer', phone: '+91 9823456789', location: 'Nashik, Maharashtra' }),
+      User.create({ name: 'Mohan Patel', email: 'mohan@agri.com', password: 'farmer123', role: 'farmer', phone: '+91 9745678901', location: 'Anand, Gujarat' }),
     ]);
 
     await Scheme.insertMany([

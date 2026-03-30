@@ -134,7 +134,7 @@ export default function Dashboard() {
                   {[
                     { icon: Droplets, label: "Humidity", val: weather.humidity + "%" },
                     { icon: Wind, label: "Wind", val: weather.windSpeed + " km/h" },
-                    { icon: Thermometer, label: "Feels like", val: (weather.temperature - 2) + "C" },
+                    { icon: Thermometer, label: "Feels like", val: (weather.feelsLike || weather.temperature - 2) + "°C" },
                   ].map(item => (
                     <div key={item.label} className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-xl p-3 text-center">
                       <item.icon className="w-4 h-4 text-sky-300 mx-auto mb-1.5" />
@@ -145,9 +145,10 @@ export default function Dashboard() {
                 </div>
                 <div className="flex gap-2 overflow-x-auto pb-1 mb-4">
                   {weather.forecast.map(f => (
-                    <div key={f.day} className="flex-shrink-0 bg-white/10 border border-white/15 rounded-xl px-3.5 py-2.5 text-center min-w-[56px]">
+                    <div key={f.day} className="flex-shrink-0 bg-white/10 border border-white/15 rounded-xl px-3.5 py-2.5 text-center min-w-[60px]">
                       <p className="text-sky-300 text-[10px] font-bold">{f.day}</p>
-                      <p className="text-white font-bold text-sm mt-1">{f.temp}</p>
+                      <p className="text-white font-bold text-sm mt-1">{f.temp}°</p>
+                      <p className="text-sky-300/60 text-[10px]">{f.condition?.split(' ')[0]}</p>
                     </div>
                   ))}
                 </div>
