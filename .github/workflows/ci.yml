@@ -61,18 +61,18 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
-      - name: Deploy backend
-        run: |
-          vercel deploy --prod \
-            --token=${{ secrets.VERCEL_TOKEN }} \
-            --yes \
-            --scope=${{ secrets.VERCEL_ORG_ID }}
+      - name: Deploy backend to Vercel
         working-directory: server
         env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_BACKEND_PROJECT_ID }}
+        run: vercel deploy --prod --token="$VERCEL_TOKEN" --yes
 
   # ── Deploy Frontend → Vercel ──────────────────────────────────────────────
   deploy-client:
@@ -82,15 +82,15 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
-      - name: Deploy frontend
-        run: |
-          vercel deploy --prod \
-            --token=${{ secrets.VERCEL_TOKEN }} \
-            --yes \
-            --scope=${{ secrets.VERCEL_ORG_ID }}
+      - name: Deploy frontend to Vercel
         working-directory: client
         env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_FRONTEND_PROJECT_ID }}
+        run: vercel deploy --prod --token="$VERCEL_TOKEN" --yes
