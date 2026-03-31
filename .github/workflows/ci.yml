@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+﻿name: CI/CD Pipeline
 
 on:
   push:
@@ -7,9 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  # ── Backend: install & test ───────────────────────────────────────────────
   test-server:
-    name: Server — Install & Test
+    name: Server - Install and Test
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -30,9 +29,8 @@ jobs:
           MONGODB_URI: mongodb://localhost:27017/test
           JWT_SECRET: test_secret
 
-  # ── Frontend: build & test ────────────────────────────────────────────────
   test-client:
-    name: Client — Build & Test
+    name: Client - Build and Test
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -53,9 +51,8 @@ jobs:
       - name: Run tests
         run: npm test
 
-  # ── Deploy Backend → Vercel ───────────────────────────────────────────────
   deploy-server:
-    name: Deploy Backend → Vercel
+    name: Deploy Backend to Vercel
     needs: [test-server, test-client]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -66,17 +63,22 @@ jobs:
           node-version: 20
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
-      - name: Deploy backend to Vercel
+      - name: Link and deploy backend
         run: |
           cd server
-          vercel deploy --prod --token="${{ secrets.VERCEL_TOKEN }}" --yes
+          vercel link --yes \
+            --token="${{ secrets.VERCEL_TOKEN }}" \
+            --project="${{ secrets.VERCEL_BACKEND_PROJECT_ID }}" \
+            --scope="${{ secrets.VERCEL_ORG_ID }}"
+          vercel deploy --prod \
+            --token="${{ secrets.VERCEL_TOKEN }}" \
+            --yes
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_BACKEND_PROJECT_ID }}
 
-  # ── Deploy Frontend → Vercel ──────────────────────────────────────────────
   deploy-client:
-    name: Deploy Frontend → Vercel
+    name: Deploy Frontend to Vercel
     needs: [test-server, test-client]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -87,10 +89,16 @@ jobs:
           node-version: 20
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
-      - name: Deploy frontend to Vercel
+      - name: Link and deploy frontend
         run: |
           cd client
-          vercel deploy --prod --token="${{ secrets.VERCEL_TOKEN }}" --yes
+          vercel link --yes \
+            --token="${{ secrets.VERCEL_TOKEN }}" \
+            --project="${{ secrets.VERCEL_FRONTEND_PROJECT_ID }}" \
+            --scope="${{ secrets.VERCEL_ORG_ID }}"
+          vercel deploy --prod \
+            --token="${{ secrets.VERCEL_TOKEN }}" \
+            --yes
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_FRONTEND_PROJECT_ID }}
