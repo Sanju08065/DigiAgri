@@ -7,26 +7,22 @@ on:
     branches: [main]
 
 jobs:
-  # ── Backend: install, lint, test ──────────────────────────────────────────
+  # ── Backend: install & test ───────────────────────────────────────────────
   test-server:
     name: Server — Install & Test
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: server
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: server/package-lock.json
-
       - name: Install dependencies
         run: npm ci
-
       - name: Run tests
         run: npm test
         env:
@@ -34,78 +30,89 @@ jobs:
           MONGODB_URI: mongodb://localhost:27017/test
           JWT_SECRET: test_secret
 
-  # ── Frontend: install, build, test ───────────────────────────────────────
+  # ── Frontend: build & test ────────────────────────────────────────────────
   test-client:
     name: Client — Build & Test
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: client
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: client/package-lock.json
-
       - name: Install dependencies
         run: npm ci
-
       - name: Build production bundle
         run: npm run build
         env:
           VITE_API_URL: https://digi-agri-h51b.vercel.app/api
-
       - name: Run tests
         run: npm test
 
-  # ── Deploy to Vercel (backend) ────────────────────────────────────────────
+  # ── Deploy Backend → Vercel ───────────────────────────────────────────────
   deploy-server:
     name: Deploy Backend → Vercel
     needs: [test-server, test-client]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
-
-      - name: Deploy backend to Vercel
-        run: vercel deploy --prod --yes --cwd server
+      - name: Pull Vercel environment
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        working-directory: server
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_BACKEND_PROJECT_ID }}
+      - name: Build project
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        working-directory: server
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_BACKEND_PROJECT_ID }}
+      - name: Deploy to Vercel
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        working-directory: server
+        env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_BACKEND_PROJECT_ID }}
 
-  # ── Deploy to Vercel (frontend) ───────────────────────────────────────────
+  # ── Deploy Frontend → Vercel ──────────────────────────────────────────────
   deploy-client:
     name: Deploy Frontend → Vercel
     needs: [test-server, test-client]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
-
-      - name: Deploy frontend to Vercel
-        run: vercel deploy --prod --yes --cwd client
+      - name: Pull Vercel environment
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        working-directory: client
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_FRONTEND_PROJECT_ID }}
+      - name: Build project
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        working-directory: client
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_FRONTEND_PROJECT_ID }}
+      - name: Deploy to Vercel
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        working-directory: client
+        env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_FRONTEND_PROJECT_ID }}
