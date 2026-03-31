@@ -67,11 +67,12 @@ jobs:
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
       - name: Deploy backend to Vercel
+        run: |
+          cd server
+          vercel deploy --prod --token="${{ secrets.VERCEL_TOKEN }}" --yes
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_BACKEND_PROJECT_ID }}
-        run: vercel deploy ./server --prod --token="$VERCEL_TOKEN" --yes
 
   # ── Deploy Frontend → Vercel ──────────────────────────────────────────────
   deploy-client:
@@ -87,8 +88,9 @@ jobs:
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
       - name: Deploy frontend to Vercel
+        run: |
+          cd client
+          vercel deploy --prod --token="${{ secrets.VERCEL_TOKEN }}" --yes
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_FRONTEND_PROJECT_ID }}
-        run: vercel deploy ./client --prod --token="$VERCEL_TOKEN" --yes
